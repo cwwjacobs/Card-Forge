@@ -2,7 +2,7 @@
 
 Card ID: `contract.no_overclaim.v0_1`
 Type: Contract Card
-Status: candidate
+Status: canon
 
 ## Input
 
