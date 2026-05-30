@@ -30,19 +30,24 @@ This Deck should not modify source files by default.
 
 ## Final gate
 
-Allowed final statuses:
+Allowed final statuses (from `RUN_STANDARD.md`):
 
 - `PASS`
 - `PASS_WITH_WARNINGS`
-- `FAIL_NEEDS_FIX`
-- `FAIL_NEEDS_SOURCE`
+- `FAIL`
+- `NEEDS_SOURCE`
 - `NEEDS_HUMAN`
 
-## Starter Draw Pool
+## Draw Pool
 
-- `check.source_inventory.v0_1`
-- `contract.no_overclaim.v0_1`
-- `gate.human_approval.v0_1`
+The Cards this Deck draws from, in rough Stack order:
+
+- `check.source_inventory.v0_1` — Intake
+- `contract.no_overclaim.v0_1` — Intake
+- `check.blocker_report.v0_1` — Structure Check
+- `prompt.repair_prompt.v0_1` — Repair Planning
+- `receipt.readiness_receipt.v0_1` — Readiness
+- `gate.human_approval.v0_1` — Gate (played whenever a risky action or index change needs sign-off)
 
 ## Claim boundary
 
