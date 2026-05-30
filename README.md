@@ -68,6 +68,17 @@ decks/ai-build-preflight/
 
 It is a Deck for checking AI-built apps before publishing.
 
+## Edge Runtime Demo
+
+**Decks compile to Card Stacks for small-context agents.**
+
+See:
+
+- `docs/EDGE_RUNTIME.md` — How frontier models forge Decks and edge agents run compiled Stacks.
+- `examples/edge-runtime-32k/` — A concrete 32k-context run packet demo using the `ai-build-preflight` Deck.
+
+This demo shows structural compression, not model benchmarking. 32k compatibility means the run packet is designed to fit in 32k tokens; it does not guarantee that every edge model will execute it reliably.
+
 ## Validation
 
 Run the public-core validator from the repository root:
