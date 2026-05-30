@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://card-forge.local/schemas/generated_card.schema.json",
+  "title": "Generated Card Worklist Record",
+  "type": "object",
+  "required": [
+    "card_id",
+    "name",
+    "type",
+    "status",
+    "input",
+    "move",
+    "output",
+    "done_when",
+    "stop_if",
+    "receipt",
+    "permissions",
+    "risk_level",
+    "token_size",
+    "source_origin"
+  ],
+  "properties": {
+    "card_id": {"type": "string"},
+    "name": {"type": "string"},
+    "type": {"type": "string"},
+    "status": {"type": "string", "enum": ["generated", "reviewed", "trusted", "indexed", "deprecated"]},
+    "input": {"type": "string"},
+    "move": {"type": "string"},
+    "output": {"type": "string"},
+    "done_when": {"type": "string"},
+    "stop_if": {"type": "string"},
+    "receipt": {"type": "string"},
+    "permissions": {"type": "array", "items": {"type": "string"}},
+    "risk_level": {"type": "string", "enum": ["low", "medium", "high", "critical"]},
+    "token_size": {"type": "string", "enum": ["small", "medium", "large"]},
+    "source_origin": {"type": "string"}
+  }
+}

@@ -43,11 +43,11 @@ REQUIRED_PATHS = [
     "schemas/receipt.schema.json",
     "skills/card-forge-skill/SKILL.md",
     "skills/card-forge-skill/README.md",
-    "skills/card-forge-skill/CARD_MAKER.md",
-    "skills/card-forge-skill/card_forge_skill.py",
-    "skills/card-forge-skill/card_maker.py",
-    "skills/card-forge-skill/examples/example_source.md",
-    "skills/card-forge-skill/examples/card_maker_generated_input.jsonl",
+    "skills/card-forge-skill/MANIFEST.md",
+    "skills/card-forge-skill/scripts/card_forge_skill.py",
+    "skills/card-forge-skill/schemas/generated_card.schema.json",
+    "skills/card-forge-skill/examples/card_registry.example.jsonl",
+    "skills/card-forge-skill/examples/tiny_source/README.md",
 ]
 
 REQUIRED_CARD_FIELDS = {
@@ -83,6 +83,10 @@ ALLOWED_CARD_STATUSES = {
     "canon",
     "deprecated",
     "rejected",
+    "generated",
+    "reviewed",
+    "trusted",
+    "indexed",
 }
 
 
@@ -186,8 +190,7 @@ def main() -> None:
 
     validate_run_state(ROOT / "runs/examples/ai_build_preflight_run_state.example.json")
     validate_run_state(ROOT / "runs/example_run_state.json")
-    validate_python_script(ROOT / "skills/card-forge-skill/card_forge_skill.py")
-    validate_python_script(ROOT / "skills/card-forge-skill/card_maker.py")
+    validate_python_script(ROOT / "skills/card-forge-skill/scripts/card_forge_skill.py")
 
     print("PASS: Card Forge core validation completed.")
 

@@ -2,38 +2,81 @@
 
 ## Purpose
 
-Card Forge Skill scans an old repo, folder, source bundle, notes bundle, prompt log, or build artifact and extracts **all discoverable Card-sized reusable moves**.
+Use this Skill when the user wants to turn messy source material into usable Card Forge Cards.
 
-It emits the results as **individual generated Cards**.
+This Skill accepts old repos, folders, notes, prompt logs, app folders, audit reports, workflow descriptions, prior conversation captures, or failed-build artifacts and emits Card Forge Cards that can be used immediately, edited, grouped into Stacks, added to Decks, or indexed later.
 
-It does not emit a Card Stack by default.
-It does not emit a Deck by default.
-It does not index Cards by default.
+A generated Card is a real usable Card. It does not need to be canonized before use.
 
-## Core output
+## Core operating rule
 
-For each discovered generated Card, produce:
+Card Forge makes usable Cards.
 
-1. one Card markdown file
-2. one registry JSONL line
-3. one extraction note in the run receipt
+Operators may keep a trusted local MCP/Card index for Cards they have tried and trust. In our workflow, that local MCP Card index is our trusted list. This is recommended for shared/public MCP servers, but it is not mandatory.
 
-The skill also produces one overall Card Forge receipt for the extraction run.
+Do not block use of a generated Card just because it has not been indexed.
+
+## When to use
+
+Use this Skill when asked to:
+
+- make Cards from a repo, folder, or old project
+- cut reusable Cards from notes or prompt logs
+- turn repeated process into Card Forge Cards
+- extract Cards from a conversation or audit report
+- prepare Cards for a Deck or Stack
+- check generated Cards against an existing Card registry/index
+- make a Card index worklist without forcing canonicalization
+
+## Inputs
+
+Useful inputs include:
+
+- source folder or source file
+- optional existing Card registry/index JSONL
+- optional desired Card type focus
+- optional output folder
+- optional max Card count
+
+## Outputs
+
+A normal run emits:
+
+```text
+_card_forge_out/
+  cards/
+    <card_id>.card.md
+  card_index_worklist.jsonl
+  duplicate_report.md
+  suggested_stacks.md
+  receipts/
+    card_making_receipt.md
+  run_manifest.json
+```
 
 ## Card boundary
 
-A valid generated Card must be:
+A good Card must be:
 
 - bounded
 - repeatable
 - playable
 - receiptable
+- useful more than once
 
-Reject or resize anything that is too vague, too tiny, too large, private, unsupported, or only useful once.
+Reject or resize anything that is:
+
+- too vague
+- too tiny
+- too broad
+- only useful once
+- secretly a whole Stack or Deck
+- dependent on private context that is not included
+- making claims stronger than its evidence supports
 
 ## Card types
 
-Choose one primary type for each Card:
+Choose one primary type:
 
 - Action Card
 - Check Card
@@ -47,72 +90,123 @@ Choose one primary type for each Card:
 
 ## Required Card fields
 
-Every emitted Card must include:
+Every generated Card must include:
 
 ```yaml
 card_id: ""
 name: ""
 type: ""
-status: "candidate"
+status: "generated"
 input: ""
 move: ""
 output: ""
 done_when: ""
 stop_if: ""
 receipt: ""
+permissions: []
+risk_level: "low | medium | high | critical"
+token_size: "small | medium | large"
+source_origin: ""
 ```
 
-`status: candidate` means the Card is newly generated and not yet indexed. It is still a usable Card.
+## Status language
 
-## Extraction rule
+Use simple status labels:
 
-The skill should prefer **many clean single Cards** over one oversized Card.
+- `generated` — newly made Card
+- `reviewed` — operator/model reviewed for shape and usefulness
+- `trusted` — operator has tried it and trusts it for their own use
+- `indexed` — added to an MCP/Card index
+- `deprecated` — replaced or no longer recommended
 
-Bad:
+Avoid `candidate` when it makes the output sound unusable or not-a-card.
 
-```text
-Repo Audit Stack
-```
+## MCP/Card index guidance
 
-Good:
+Card Forge does not require operators to index Cards before using them.
 
-```text
-Source Inventory Card
-Dependency Surface Card
-JSON Validate Card
-Readme Claim Boundary Card
-Final Receipt Card
-```
+Recommended strategy:
 
-## Run outputs
+- use generated Cards locally as needed
+- review and test useful Cards
+- add trusted Cards to a local MCP/Card index for agents
+- clearly label experimental/dev Cards if exposed through MCP
+- reserve shared/public MCP indexes for Cards the operator has tried and trusts
 
-A normal run should write:
+## Process
 
-```text
-_card_forge_out/
-  cards/
-    <card_id>.card.md
-  registry_card_generated.jsonl
-  receipts/
-    card_forge_extraction_receipt.md
-```
+### 1. Inventory the source
 
-## Operator approval
+List available material, missing context, and source type.
 
-New Cards are generated with `status: candidate`, meaning they are newly created and not yet indexed.
+Stop only if there is no usable source material.
 
-Only the operator may add a Card to the local MCP index.
+### 2. Find reusable moves
 
-## Publishing guidance
+Look for reusable checks, actions, prompts, gates, receipts, templates, adapters, transforms, validation steps, context compression moves, and human approval points.
 
-Card Forge recommends trusted/indexed Cards for public or shared MCP exposure. Operators may still share generated or experimental Cards. The Card index is advisory, not an enforcement gate.
+Prefer many clean Cards over one oversized Card.
 
-## Local helper
+### 3. Cut Cards
 
-Run from the repository root or any folder with Python 3:
+For each reusable move, produce one Card.
+
+Each Card should answer:
+
+- What does it take in?
+- What does it do?
+- What does it produce?
+- When is it done?
+- When should it stop?
+- What receipt/proof does it leave?
+
+### 4. Check existing Card registry/index
+
+If an existing registry/index is provided, compare generated Cards against it.
+
+Flag likely overlap by:
+
+- same or similar card_id
+- same or similar name
+- same type and output
+- same type and move
+
+Do not block the Card. Warn the operator.
+
+### 5. Emit worklist and receipt
+
+Emit Cards, a JSONL worklist, duplicate report, suggested Stack groupings, and a receipt.
+
+## Helper script
+
+Run from the Skill folder or repo root:
 
 ```bash
-python3 skills/card-forge-skill/card_forge_skill.py --source <repo-or-folder> --out _card_forge_out
+python3 skills/card-forge-skill/scripts/card_forge_skill.py --source <source-folder-or-file> --out _card_forge_out
 ```
 
-The helper uses standard-library heuristics to extract generated Cards from visible files. A model or operator should review the generated Cards before adding them to their local Card index.
+With an existing registry/index:
+
+```bash
+python3 skills/card-forge-skill/scripts/card_forge_skill.py \
+  --source <source-folder-or-file> \
+  --registry registry/card_registry.jsonl \
+  --out _card_forge_out
+```
+
+## Final response behavior
+
+When using this Skill, summarize:
+
+```text
+Generated Cards:
+- total:
+- use-now:
+- needs edit:
+- likely duplicate:
+- suggested Stack groupings:
+- suggested MCP/index candidates:
+- warnings:
+```
+
+Never claim that generated Cards are guaranteed correct, safe, or production-ready.
