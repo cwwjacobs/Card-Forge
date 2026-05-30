@@ -1,0 +1,24 @@
+{
+  "title": "Card Stack",
+  "type": "object",
+  "required": [
+    "stack_id",
+    "name",
+    "cards_in_order",
+    "entry_condition",
+    "exit_condition",
+    "failure_route"
+  ],
+  "properties": {
+    "stack_id": { "type": "string" },
+    "name": { "type": "string" },
+    "purpose": { "type": "string" },
+    "cards_in_order": { "type": "array", "items": { "type": "string" } },
+    "entry_condition": { "type": "string" },
+    "exit_condition": { "type": "string" },
+    "failure_route": { "type": "string" },
+    "run_outputs": { "type": "array", "items": { "type": "string" } },
+    "permissions": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}
