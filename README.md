@@ -4,6 +4,16 @@ Reusable workflow Cards, Card Stacks, Decks, Runs, and Receipts for AI-assisted 
 
 Card Forge turns messy source material into small reusable workflow moves that can be stacked into repeatable Decks and run by humans, frontier models, or smaller edge agents.
 
+## Start here
+
+New users should begin with:
+
+```text
+START_HERE.md
+```
+
+That file gives the 5-minute path through the templates, starter Cards, registry, first example Deck, example Run State, and example Receipt.
+
 ## Core idea
 
 - A **Card** is one reusable workflow move.
@@ -44,6 +54,8 @@ runs/            Example Run states and outputs
 receipts/        Example receipts from Runs
 schemas/         JSON schemas for Cards, Decks, Runs, and Receipts
 prompts/         Prompt cards for drawing, cutting, forging, building, and running
+templates/       Copyable templates for Cards, Decks, and Receipts
+scripts/         Validation scripts
 ```
 
 ## First Deck
@@ -55,6 +67,26 @@ decks/ai-build-preflight/
 ```
 
 It is a Deck for checking AI-built apps before publishing.
+
+## Validation
+
+Run the public-core validator from the repository root:
+
+```bash
+python3 scripts/validate_card_forge.py
+```
+
+Expected result:
+
+```text
+PASS: Card Forge core validation completed.
+```
+
+The same validator is wired into GitHub Actions through:
+
+```text
+.github/workflows/validate.yml
+```
 
 ## License
 
