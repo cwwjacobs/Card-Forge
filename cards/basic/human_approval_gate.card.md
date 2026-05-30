@@ -2,7 +2,7 @@
 
 Card ID: `gate.human_approval.v0_1`
 Type: Gate Card
-Status: candidate
+Status: canon
 
 ## Input
 
