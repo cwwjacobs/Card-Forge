@@ -43,8 +43,11 @@ REQUIRED_PATHS = [
     "schemas/receipt.schema.json",
     "skills/card-forge-skill/SKILL.md",
     "skills/card-forge-skill/README.md",
+    "skills/card-forge-skill/CARD_MAKER.md",
     "skills/card-forge-skill/card_forge_skill.py",
+    "skills/card-forge-skill/card_maker.py",
     "skills/card-forge-skill/examples/example_source.md",
+    "skills/card-forge-skill/examples/card_maker_candidate_input.jsonl",
 ]
 
 REQUIRED_CARD_FIELDS = {
@@ -184,6 +187,7 @@ def main() -> None:
     validate_run_state(ROOT / "runs/examples/ai_build_preflight_run_state.example.json")
     validate_run_state(ROOT / "runs/example_run_state.json")
     validate_python_script(ROOT / "skills/card-forge-skill/card_forge_skill.py")
+    validate_python_script(ROOT / "skills/card-forge-skill/card_maker.py")
 
     print("PASS: Card Forge core validation completed.")
 
