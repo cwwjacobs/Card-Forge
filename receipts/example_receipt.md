@@ -1,7 +1,7 @@
 # Example Receipt
 
 Run ID: `run.example_001`
-Deck ID: `deck.example.v0_1`
+Deck ID: `deck.ai_build_preflight.v0_1`
 Status: `READY`
 
 ## Input seen
