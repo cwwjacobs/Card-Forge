@@ -101,6 +101,10 @@ New Cards are `candidate` status.
 
 Only the operator may approve a Card as `canon`.
 
+## Publishing guidance
+
+Card Forge recommends canon-ledgered Cards for public or shared MCP exposure. Operators may still share candidate or experimental Cards. The canon ledger is advisory, not an enforcement gate.
+
 ## Local helper
 
 Run from the repository root or any folder with Python 3:

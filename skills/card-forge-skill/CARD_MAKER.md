@@ -70,6 +70,10 @@ _card_maker_out/
   promotion_worklist.jsonl
 ```
 
+## Publishing guidance
+
+Card Forge recommends canon-ledgered Cards for public or shared MCP exposure. Operators may still expose candidate or experimental Cards. The canon ledger is advisory guidance, not an enforcement gate.
+
 ## Claim boundary
 
 Duplicate detection is heuristic. A flagged duplicate may be a valid variant. An unflagged candidate may still overlap semantically. Only the operator decides what enters the canon ledger.

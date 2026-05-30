@@ -42,6 +42,12 @@ Avoid absolute language:
 - `bug-free`
 - `compliance approved`
 
+## Publishing guidance
+
+Card Forge recommends using **canon-ledgered Cards** for public or shared MCP exposure, because they have been reviewed and tested by the operator.
+
+Operators may still expose **candidate or experimental Cards** if they choose. The canon ledger is advisory guidance, not an enforcement gate.
+
 ## Human authority
 
 Card Forge can structure and receipt work. It does not replace human judgment, review, or responsibility.

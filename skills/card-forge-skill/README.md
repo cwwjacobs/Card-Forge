@@ -57,3 +57,7 @@ python3 skills/card-forge-skill/card_maker.py \
 Step 3: **Operator** manually reviews the worklist and approves canon Cards.
 
 Card Maker does not auto-canonize. See `CARD_MAKER.md` for details.
+
+## Publishing guidance
+
+Card Forge recommends **canon-ledgered Cards** for public or shared MCP exposure. Operators may still share **candidate or experimental Cards** if they choose. The canon ledger is advisory guidance, not an enforcement gate.
