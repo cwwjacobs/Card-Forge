@@ -201,9 +201,9 @@ When using this Skill, summarize:
 ```text
 Generated Cards:
 - total:
-- use-now:
-- needs edit:
-- likely duplicate:
+- usable:
+- cards with index warnings:
+- duplicate/index warnings:
 - suggested Stack groupings:
 - suggested MCP/index options:
 - warnings:

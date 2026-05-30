@@ -1,7 +1,7 @@
 {
-  "tool": "card_making_skill.py",
-  "source": "/mnt/data/card-making-skill/examples/tiny_source",
-  "registry": "/mnt/data/card-making-skill/examples/card_registry.example.jsonl",
+  "tool": "card_forge_skill.py",
+  "source": "/home/terminus-protocol/Desktop/Card-Forge/skills/card-forge-skill/examples/tiny_source",
+  "registry": "/home/terminus-protocol/Desktop/Card-Forge/skills/card-forge-skill/examples/card_registry.example.jsonl",
   "generated_cards": 5,
   "outputs": [
     "cards/",

@@ -43,9 +43,9 @@ Stop if required source material is missing or the move would require guessing.
 
 Record inputs used, result summary, warnings, skipped checks, and path to `source_inventory_report.md`.
 
-## Review notes
+## Index notes
 
-- Use now: with review
-- Duplicate risk: high
-- Suggested action: review_or_merge
-- Reason: Possible overlap: exact name match. Review before indexing or publishing.
+- Usable: yes
+- Duplicate/index warning: high
+- Suggested action: use_with_index_warning
+- Reason: Possible overlap: exact name match. Check before indexing or publishing.
