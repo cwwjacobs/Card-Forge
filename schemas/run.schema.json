@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://card-forge.local/schemas/run.schema.json",
+  "title": "Run State",
+  "type": "object",
+  "required": [
+    "run_id",
+    "deck_id",
+    "current_stack",
+    "current_card",
+    "status",
+    "inputs",
+    "outputs",
+    "next_action",
+    "receipt_path"
+  ],
+  "properties": {
+    "run_id": { "type": "string" },
+    "deck_id": { "type": "string" },
+    "current_stack": { "type": "string" },
+    "current_card": { "type": "string" },
+    "status": { "type": "string" },
+    "inputs": { "type": "array", "items": { "type": "string" } },
+    "outputs": { "type": "array", "items": { "type": "string" } },
+    "next_action": { "type": "string" },
+    "receipt_path": { "type": "string" }
+  },
+  "additionalProperties": true
+}
