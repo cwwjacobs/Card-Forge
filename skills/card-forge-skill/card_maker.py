@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Card Maker: check candidate Cards against the canonical registry.
+"""Card Maker: check generated Cards against the existing Card registry.
 
-Reads candidate Cards (e.g. from Card Forge Skill output) and the canonical
-registry. Emits a duplicate report and a promotion worklist. Does NOT
-auto-canonize without operator approval.
+Reads generated Cards (e.g. from Card Forge Skill output) and the existing
+Card registry. Emits a duplicate report and a review worklist. Does NOT
+auto-approve or auto-index without operator consent.
 
 This script uses only the Python standard library.
 """
@@ -87,79 +87,79 @@ def normalize(text: str) -> str:
 
 @dataclass
 class DuplicateFinding:
-    candidate: CardRecord
-    canonical: CardRecord
+    generated: CardRecord
+    existing: CardRecord
     reasons: list[str]
 
 
 @dataclass
-class PromotionCandidate:
+class ReviewCandidate:
     card: CardRecord
     warnings: list[str]
 
 
-def find_duplicates(candidates: list[CardRecord], canonical: list[CardRecord]) -> list[DuplicateFinding]:
+def find_duplicates(generated: list[CardRecord], existing: list[CardRecord]) -> list[DuplicateFinding]:
     findings: list[DuplicateFinding] = []
-    canonical_by_id = {c.card_id: c for c in canonical}
-    canonical_by_name = {normalize(c.name): c for c in canonical if normalize(c.name)}
+    existing_by_id = {c.card_id: c for c in existing}
+    existing_by_name = {normalize(c.name): c for c in existing if normalize(c.name)}
 
-    for cand in candidates:
+    for gen in generated:
         reasons: list[str] = []
         matched: CardRecord | None = None
 
-        if cand.card_id in canonical_by_id:
-            matched = canonical_by_id[cand.card_id]
+        if gen.card_id in existing_by_id:
+            matched = existing_by_id[gen.card_id]
             reasons.append("exact card_id match")
 
-        norm_name = normalize(cand.name)
-        if norm_name and norm_name in canonical_by_name:
-            matched = canonical_by_name[norm_name]
+        norm_name = normalize(gen.name)
+        if norm_name and norm_name in existing_by_name:
+            matched = existing_by_name[norm_name]
             if "exact name match" not in reasons:
                 reasons.append("exact name match")
 
         if matched:
-            norm_cand_move = normalize(cand.move)
+            norm_gen_move = normalize(gen.move)
             norm_match_move = normalize(matched.move)
-            if norm_cand_move and norm_cand_move == norm_match_move:
+            if norm_gen_move and norm_gen_move == norm_match_move:
                 if "same move text" not in reasons:
                     reasons.append("same move text")
 
-            findings.append(DuplicateFinding(candidate=cand, canonical=matched, reasons=reasons))
+            findings.append(DuplicateFinding(generated=gen, existing=matched, reasons=reasons))
 
     return findings
 
 
-def find_promotion_candidates(
-    candidates: list[CardRecord],
-    canonical: list[CardRecord],
+def find_review_candidates(
+    generated: list[CardRecord],
+    existing: list[CardRecord],
     duplicate_findings: list[DuplicateFinding],
-) -> list[PromotionCandidate]:
-    duplicate_ids = {f.candidate.card_id for f in duplicate_findings}
-    canonical_norm_names = {normalize(c.name) for c in canonical}
-    canonical_norm_moves = {normalize(c.move) for c in canonical}
-    promotion_candidates: list[PromotionCandidate] = []
+) -> list[ReviewCandidate]:
+    duplicate_ids = {f.generated.card_id for f in duplicate_findings}
+    existing_norm_names = {normalize(c.name) for c in existing}
+    existing_norm_moves = {normalize(c.move) for c in existing}
+    review_candidates: list[ReviewCandidate] = []
 
-    for cand in candidates:
-        if cand.card_id in duplicate_ids:
+    for gen in generated:
+        if gen.card_id in duplicate_ids:
             continue
         warnings: list[str] = []
-        norm_name = normalize(cand.name)
-        norm_move = normalize(cand.move)
+        norm_name = normalize(gen.name)
+        norm_move = normalize(gen.move)
 
-        if norm_name and any(norm_name in cn or cn in norm_name for cn in canonical_norm_names if cn):
-            warnings.append("name overlaps with existing canonical Card")
-        if norm_move and any(norm_move in cm or cm in norm_move for cm in canonical_norm_moves if cm):
-            warnings.append("move text overlaps with existing canonical Card")
-        if not cand.name or len(cand.name) < 3:
+        if norm_name and any(norm_name in en or en in norm_name for en in existing_norm_names if en):
+            warnings.append("name overlaps with existing indexed Card")
+        if norm_move and any(norm_move in em or em in norm_move for em in existing_norm_moves if em):
+            warnings.append("move text overlaps with existing indexed Card")
+        if not gen.name or len(gen.name) < 3:
             warnings.append("name is too short")
-        if not cand.move or len(cand.move) < 10:
+        if not gen.move or len(gen.move) < 10:
             warnings.append("move is too short")
-        if cand.status != "candidate":
-            warnings.append(f"status is '{cand.status}', expected 'candidate'")
+        if gen.status != "candidate":
+            warnings.append(f"status is '{gen.status}', expected 'candidate' (newly generated)")
 
-        promotion_candidates.append(PromotionCandidate(card=cand, warnings=warnings))
+        review_candidates.append(ReviewCandidate(card=gen, warnings=warnings))
 
-    return promotion_candidates
+    return review_candidates
 
 
 def write_duplicate_report(findings: list[DuplicateFinding], out_path: Path) -> None:
@@ -168,23 +168,23 @@ def write_duplicate_report(findings: list[DuplicateFinding], out_path: Path) -> 
         "",
         f"Duplicates found: {len(findings)}",
         "",
-        "This report lists candidate Cards that appear to already exist in the canonical registry.",
+        "This report lists generated Cards that appear to already exist in the existing Card registry.",
         "",
         "## Operator instruction",
         "",
-        "Review each finding. If the candidate is truly a duplicate, discard it. If it is a variant, rename or differentiate the move/output before promotion.",
+        "Review each finding. If the generated Card is truly a duplicate, discard it. If it is a variant, rename or differentiate the move/output before indexing.",
         "",
     ]
 
     for i, finding in enumerate(findings, start=1):
         lines.extend(
             [
-                f"### {i}. `{finding.candidate.card_id}`",
+                f"### {i}. `{finding.generated.card_id}`",
                 "",
-                f"- Candidate name: `{finding.candidate.name}`",
-                f"- Canonical match: `{finding.canonical.card_id}` (`{finding.canonical.name}`)",
+                f"- Generated Card name: `{finding.generated.name}`",
+                f"- Existing match: `{finding.existing.card_id}` (`{finding.existing.name}`)",
                 f"- Reasons: {', '.join(finding.reasons)}",
-                f"- Candidate source: `{finding.candidate.source_origin}`",
+                f"- Generated Card source: `{finding.generated.source_origin}`",
                 "",
             ]
         )
@@ -197,49 +197,48 @@ def write_duplicate_report(findings: list[DuplicateFinding], out_path: Path) -> 
         [
             "## Claim boundary",
             "",
-            "This report uses heuristics. It does not guarantee completeness. A candidate flagged as duplicate may be a valid variant, and a candidate not flagged may still overlap semantically.",
+            "This report uses heuristics. It does not guarantee completeness. A generated Card flagged as duplicate may be a valid variant, and a generated Card not flagged may still overlap semantically.",
         ]
     )
 
     out_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def write_promotion_worklist(promotions: list[PromotionCandidate], out_path: Path) -> None:
+def write_review_worklist(reviews: list[ReviewCandidate], out_path: Path) -> None:
     lines = [
-        "# Card Maker Promotion Worklist",
+        "# Card Maker Review Worklist",
         "",
-        f"Candidates ready for operator review: {len(promotions)}",
+        f"Generated Cards ready for operator review: {len(reviews)}",
         "",
-        "This worklist contains candidate Cards that are not flagged as duplicates. The operator must review each Card before promoting it to `canon`.",
+        "This worklist contains generated Cards that are not flagged as duplicates. The operator may review each Card before indexing it for MCP use, publishing it, or keeping it private.",
         "",
         "## Operator instruction",
         "",
-        "1. Read the candidate Card file.",
+        "1. Read the generated Card file.",
         "2. Check that it is bounded, repeatable, playable, and receiptable.",
         "3. If warnings are listed, resolve them first.",
-        "4. Only then change `status` from `candidate` to `canon`.",
-        "5. Append the approved record to `registry/card_registry.jsonl`.",
+        "4. Only then index it for your local MCP Card use, publish it, or keep it private.",
         "",
     ]
 
-    clean: list[PromotionCandidate] = []
-    warned: list[PromotionCandidate] = []
-    for p in promotions:
-        (warned if p.warnings else clean).append(p)
+    clean: list[ReviewCandidate] = []
+    warned: list[ReviewCandidate] = []
+    for r in reviews:
+        (warned if r.warnings else clean).append(r)
 
     if clean:
         lines.extend(
             [
-                "## Clean candidates",
+                "## Clean generated Cards",
                 "",
             ]
         )
-        for p in clean:
+        for r in clean:
             lines.extend(
                 [
-                    f"- `{p.card.card_id}` — {p.card.name}",
-                    f"  - Source: `{p.card.source_origin}`",
-                    f"  - Output: `{p.card.output}`",
+                    f"- `{r.card.card_id}` — {r.card.name}",
+                    f"  - Source: `{r.card.source_origin}`",
+                    f"  - Output: `{r.card.output}`",
                     "",
                 ]
             )
@@ -247,56 +246,56 @@ def write_promotion_worklist(promotions: list[PromotionCandidate], out_path: Pat
     if warned:
         lines.extend(
             [
-                "## Candidates with warnings",
+                "## Generated Cards with warnings",
                 "",
             ]
         )
-        for p in warned:
+        for r in warned:
             lines.extend(
                 [
-                    f"- `{p.card.card_id}` — {p.card.name}",
-                    f"  - Source: `{p.card.source_origin}`",
-                    f"  - Output: `{p.card.output}`",
-                    f"  - Warnings: {', '.join(p.warnings)}",
+                    f"- `{r.card.card_id}` — {r.card.name}",
+                    f"  - Source: `{r.card.source_origin}`",
+                    f"  - Output: `{r.card.output}`",
+                    f"  - Warnings: {', '.join(r.warnings)}",
                     "",
                 ]
             )
 
-    if not promotions:
-        lines.append("No promotion candidates.")
+    if not reviews:
+        lines.append("No review candidates.")
         lines.append("")
 
     lines.extend(
         [
             "## Claim boundary",
             "",
-            "This worklist is a filtered view, not an approval. Only the operator may promote a Card to canon. Card Maker never auto-canonizes.",
+            "This worklist is a filtered view, not an approval. Only the operator decides what enters their local MCP Card index. Card Maker never auto-approves.",
         ]
     )
 
     out_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def write_worklist_jsonl(promotions: list[PromotionCandidate], out_path: Path) -> None:
+def write_worklist_jsonl(reviews: list[ReviewCandidate], out_path: Path) -> None:
     with out_path.open("w", encoding="utf-8") as f:
-        for p in promotions:
-            record = dict(p.card.raw)
-            record["_card_maker_warnings"] = p.warnings
-            record["_card_maker_ready_for_review"] = not p.warnings
+        for r in reviews:
+            record = dict(r.card.raw)
+            record["_card_maker_warnings"] = r.warnings
+            record["_card_maker_ready_for_review"] = not r.warnings
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Check candidate Cards against the canonical registry.")
+    parser = argparse.ArgumentParser(description="Check generated Cards against the existing Card registry.")
     parser.add_argument(
         "--candidates",
-        default="_card_forge_out/registry_card_candidates.jsonl",
-        help="Candidate registry JSONL (default: _card_forge_out/registry_card_candidates.jsonl)",
+        default="_card_forge_out/registry_card_generated.jsonl",
+        help="Generated Card registry JSONL (default: _card_forge_out/registry_card_generated.jsonl)",
     )
     parser.add_argument(
         "--registry",
         default="registry/card_registry.jsonl",
-        help="Canonical registry JSONL (default: registry/card_registry.jsonl)",
+        help="Existing Card registry JSONL (default: registry/card_registry.jsonl)",
     )
     parser.add_argument(
         "--out",
@@ -310,36 +309,36 @@ def main() -> None:
     out_dir = Path(args.out).expanduser().resolve()
 
     if not candidates_path.exists():
-        fail(f"Candidates file not found: {candidates_path}")
+        fail(f"Generated Cards file not found: {candidates_path}")
     if not registry_path.exists():
         fail(f"Registry file not found: {registry_path}")
 
-    candidate_records = load_jsonl(candidates_path)
-    canonical_records = load_jsonl(registry_path)
+    generated_records = load_jsonl(candidates_path)
+    existing_records = load_jsonl(registry_path)
 
-    for i, rec in enumerate(candidate_records):
-        validate_record(rec, f"Candidate line {i + 1}")
-    for i, rec in enumerate(canonical_records):
-        validate_record(rec, f"Canonical line {i + 1}")
+    for i, rec in enumerate(generated_records):
+        validate_record(rec, f"Generated line {i + 1}")
+    for i, rec in enumerate(existing_records):
+        validate_record(rec, f"Existing line {i + 1}")
 
-    candidates = [to_card(r) for r in candidate_records]
-    canonical = [to_card(r) for r in canonical_records]
+    generated = [to_card(r) for r in generated_records]
+    existing = [to_card(r) for r in existing_records]
 
-    duplicates = find_duplicates(candidates, canonical)
-    promotions = find_promotion_candidates(candidates, canonical, duplicates)
+    duplicates = find_duplicates(generated, existing)
+    reviews = find_review_candidates(generated, existing, duplicates)
 
     out_dir.mkdir(parents=True, exist_ok=True)
 
     write_duplicate_report(duplicates, out_dir / "duplicate_report.md")
-    write_promotion_worklist(promotions, out_dir / "promotion_worklist.md")
-    write_worklist_jsonl(promotions, out_dir / "promotion_worklist.jsonl")
+    write_review_worklist(reviews, out_dir / "review_worklist.md")
+    write_worklist_jsonl(reviews, out_dir / "review_worklist.jsonl")
 
     print(f"PASS: Card Maker completed.")
-    print(f"  Candidates checked: {len(candidates)}")
-    print(f"  Canonical Cards:    {len(canonical)}")
-    print(f"  Duplicates found:   {len(duplicates)}")
-    print(f"  Promotion ready:    {len(promotions)}")
-    print(f"  Output:             {out_dir}")
+    print(f"  Generated Cards checked: {len(generated)}")
+    print(f"  Existing indexed Cards:  {len(existing)}")
+    print(f"  Duplicates found:        {len(duplicates)}")
+    print(f"  Review ready:            {len(reviews)}")
+    print(f"  Output:                  {out_dir}")
 
 
 if __name__ == "__main__":

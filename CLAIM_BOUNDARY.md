@@ -44,9 +44,9 @@ Avoid absolute language:
 
 ## Publishing guidance
 
-Card Forge recommends using **canon-ledgered Cards** for public or shared MCP exposure, because they have been reviewed and tested by the operator.
+Card Forge generates usable Cards. Our recommended operating pattern is to keep a local MCP Card index of trusted/tested Cards for agents, while allowing experimental Cards to remain local, private, dev-indexed, or unindexed.
 
-Operators may still expose **candidate or experimental Cards** if they choose. The canon ledger is advisory guidance, not an enforcement gate.
+Card Forge recommends trusted/indexed Cards for public or shared MCP exposure. Operators may still expose generated or experimental Cards. The Card index is advisory guidance, not an enforcement gate.
 
 ## Human authority
 

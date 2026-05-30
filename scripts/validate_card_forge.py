@@ -47,7 +47,7 @@ REQUIRED_PATHS = [
     "skills/card-forge-skill/card_forge_skill.py",
     "skills/card-forge-skill/card_maker.py",
     "skills/card-forge-skill/examples/example_source.md",
-    "skills/card-forge-skill/examples/card_maker_candidate_input.jsonl",
+    "skills/card-forge-skill/examples/card_maker_generated_input.jsonl",
 ]
 
 REQUIRED_CARD_FIELDS = {

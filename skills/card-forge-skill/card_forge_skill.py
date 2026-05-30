@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Card Forge Skill helper.
 
-Scan an old repo, folder, or source bundle and emit multiple candidate Cards.
+Scan an old repo, folder, or source bundle and emit multiple generated Cards.
 
 This script is intentionally heuristic and standard-library only. It creates a
-first-pass Card Collection candidate set for model/operator review. It does not
-canonize Cards and does not build Card Stacks or Decks.
+first-pass generated Card set for model/operator review. It does not
+index Cards and does not build Card Stacks or Decks.
 """
 
 from __future__ import annotations
@@ -60,7 +60,7 @@ TYPE_RULES = [
 
 
 @dataclass(frozen=True)
-class CandidateCard:
+class GeneratedCard:
     card_id: str
     name: str
     type: str
@@ -81,7 +81,7 @@ def slugify(value: str) -> str:
     value = value.lower()
     value = re.sub(r"[^a-z0-9]+", "_", value)
     value = re.sub(r"_+", "_", value).strip("_")
-    return value[:64] or "candidate_card"
+    return value[:64] or "generated_card"
 
 
 def card_prefix(card_type: str) -> str:
@@ -153,7 +153,7 @@ def infer_move(card_type: str, path: Path, text: str) -> str:
     return f"Perform the bounded workflow move represented by {file_hint}."
 
 
-def make_candidate(path: Path, source_root: Path) -> CandidateCard:
+def make_generated_card(path: Path, source_root: Path) -> GeneratedCard:
     text = read_text_safely(path)
     card_type = classify_card_type(text, path)
     name = infer_name(text, path, card_type)
@@ -168,7 +168,7 @@ def make_candidate(path: Path, source_root: Path) -> CandidateCard:
     if card_type == "Gate Card":
         permission = "human_required"
 
-    return CandidateCard(
+    return GeneratedCard(
         card_id=card_id,
         name=name,
         type=card_type,
@@ -186,7 +186,7 @@ def make_candidate(path: Path, source_root: Path) -> CandidateCard:
     )
 
 
-def card_markdown(card: CandidateCard) -> str:
+def card_markdown(card: GeneratedCard) -> str:
     return f"""# {card.name}
 
 Card ID: `{card.card_id}`
@@ -235,7 +235,7 @@ Status: candidate
 """
 
 
-def registry_record(card: CandidateCard) -> dict[str, object]:
+def registry_record(card: GeneratedCard) -> dict[str, object]:
     return {
         "card_id": card.card_id,
         "name": card.name,
@@ -255,13 +255,13 @@ def registry_record(card: CandidateCard) -> dict[str, object]:
     }
 
 
-def write_outputs(cards: list[CandidateCard], out_dir: Path, source: Path) -> None:
+def write_outputs(cards: list[GeneratedCard], out_dir: Path, source: Path) -> None:
     cards_dir = out_dir / "cards"
     receipts_dir = out_dir / "receipts"
     cards_dir.mkdir(parents=True, exist_ok=True)
     receipts_dir.mkdir(parents=True, exist_ok=True)
 
-    registry_path = out_dir / "registry_card_candidates.jsonl"
+    registry_path = out_dir / "registry_card_generated.jsonl"
     with registry_path.open("w", encoding="utf-8") as registry_file:
         for card in cards:
             card_path = cards_dir / f"{card.card_id}.card.md"
@@ -274,7 +274,7 @@ def write_outputs(cards: list[CandidateCard], out_dir: Path, source: Path) -> No
         f"Source: `{source}`",
         f"Cards emitted: {len(cards)}",
         "",
-        "## Candidate Cards",
+        "## Generated Cards",
         "",
     ]
     for card in cards:
@@ -284,8 +284,8 @@ def write_outputs(cards: list[CandidateCard], out_dir: Path, source: Path) -> No
                 "",
                 f"- Type: {card.type}",
                 f"- Source: `{card.source_origin}`",
-                f"- Boundary decision: valid candidate Card size",
-                f"- Why it qualifies: bounded, repeatable, playable, and receiptable as a first-pass candidate.",
+                f"- Boundary decision: valid generated Card size",
+                f"- Why it qualifies: bounded, repeatable, playable, and receiptable as a first-pass generated Card.",
                 "",
             ]
         )
@@ -294,17 +294,17 @@ def write_outputs(cards: list[CandidateCard], out_dir: Path, source: Path) -> No
         [
             "## Next Action",
             "",
-            "Review candidate Cards before adding them to the canonical registry. Promote only operator-approved Cards to canon.",
+            "Review generated Cards before adding them to your local Card index. Only operator-approved Cards should be indexed for MCP use.",
         ]
     )
     (receipts_dir / "card_forge_extraction_receipt.md").write_text("\n".join(receipt_lines) + "\n", encoding="utf-8")
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Extract candidate Cards from a repo or source folder.")
+    parser = argparse.ArgumentParser(description="Extract generated Cards from a repo or source folder.")
     parser.add_argument("--source", required=True, help="Repo, folder, or file to scan.")
     parser.add_argument("--out", default="_card_forge_out", help="Output directory.")
-    parser.add_argument("--limit", type=int, default=50, help="Maximum candidate Cards to emit.")
+    parser.add_argument("--limit", type=int, default=50, help="Maximum generated Cards to emit.")
     args = parser.parse_args()
 
     source = Path(args.source).expanduser().resolve()
@@ -312,14 +312,14 @@ def main() -> None:
         raise SystemExit(f"Source not found: {source}")
 
     files = list(iter_source_files(source))[: args.limit]
-    cards = [make_candidate(path, source if source.is_dir() else source.parent) for path in files]
+    cards = [make_generated_card(path, source if source.is_dir() else source.parent) for path in files]
 
     if not cards:
-        raise SystemExit("No text source files found to extract candidate Cards from.")
+        raise SystemExit("No text source files found to extract generated Cards from.")
 
     out_dir = Path(args.out).expanduser().resolve()
     write_outputs(cards, out_dir, source)
-    print(f"PASS: emitted {len(cards)} candidate Cards to {out_dir}")
+    print(f"PASS: emitted {len(cards)} generated Cards to {out_dir}")
 
 
 if __name__ == "__main__":

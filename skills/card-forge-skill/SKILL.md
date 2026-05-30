@@ -4,15 +4,15 @@
 
 Card Forge Skill scans an old repo, folder, source bundle, notes bundle, prompt log, or build artifact and extracts **all discoverable Card-sized reusable moves**.
 
-It emits the results as **individual candidate Cards**.
+It emits the results as **individual generated Cards**.
 
 It does not emit a Card Stack by default.
 It does not emit a Deck by default.
-It does not promote Cards to canon by default.
+It does not index Cards by default.
 
 ## Core output
 
-For each discovered Card candidate, produce:
+For each discovered generated Card, produce:
 
 1. one Card markdown file
 2. one registry JSONL line
@@ -22,7 +22,7 @@ The skill also produces one overall Card Forge receipt for the extraction run.
 
 ## Card boundary
 
-A valid Card candidate must be:
+A valid generated Card must be:
 
 - bounded
 - repeatable
@@ -62,6 +62,8 @@ stop_if: ""
 receipt: ""
 ```
 
+`status: candidate` means the Card is newly generated and not yet indexed. It is still a usable Card.
+
 ## Extraction rule
 
 The skill should prefer **many clean single Cards** over one oversized Card.
@@ -90,20 +92,20 @@ A normal run should write:
 _card_forge_out/
   cards/
     <card_id>.card.md
-  registry_card_candidates.jsonl
+  registry_card_generated.jsonl
   receipts/
     card_forge_extraction_receipt.md
 ```
 
 ## Operator approval
 
-New Cards are `candidate` status.
+New Cards are generated with `status: candidate`, meaning they are newly created and not yet indexed.
 
-Only the operator may approve a Card as `canon`.
+Only the operator may add a Card to the local MCP index.
 
 ## Publishing guidance
 
-Card Forge recommends canon-ledgered Cards for public or shared MCP exposure. Operators may still share candidate or experimental Cards. The canon ledger is advisory, not an enforcement gate.
+Card Forge recommends trusted/indexed Cards for public or shared MCP exposure. Operators may still share generated or experimental Cards. The Card index is advisory, not an enforcement gate.
 
 ## Local helper
 
@@ -113,4 +115,4 @@ Run from the repository root or any folder with Python 3:
 python3 skills/card-forge-skill/card_forge_skill.py --source <repo-or-folder> --out _card_forge_out
 ```
 
-The helper uses standard-library heuristics to extract candidate Cards from visible files. A model or operator should review the candidates before adding them to the canonical registry.
+The helper uses standard-library heuristics to extract generated Cards from visible files. A model or operator should review the generated Cards before adding them to their local Card index.
