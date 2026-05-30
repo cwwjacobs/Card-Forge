@@ -1,6 +1,6 @@
 {
   "run_id": "run.example_001",
-  "deck_id": "deck.example.v0_1",
+  "deck_id": "deck.ai_build_preflight.v0_1",
   "current_stack": "stack.intake.v0_1",
   "current_card": "check.source_inventory.v0_1",
   "status": "READY",
