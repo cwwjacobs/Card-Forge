@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://card-forge.local/schemas/card.schema.json",
+  "title": "Card",
+  "type": "object",
+  "required": [
+    "card_id",
+    "name",
+    "type",
+    "status",
+    "input",
+    "move",
+    "output",
+    "done_when",
+    "stop_if",
+    "receipt"
+  ],
+  "properties": {
+    "card_id": { "type": "string" },
+    "name": { "type": "string" },
+    "type": { "type": "string" },
+    "status": { "type": "string" },
+    "input": { "type": ["string", "array"] },
+    "move": { "type": "string" },
+    "output": { "type": ["string", "array"] },
+    "done_when": { "type": "string" },
+    "stop_if": { "type": "string" },
+    "receipt": { "type": "string" },
+    "permissions": { "type": ["string", "array"] },
+    "used_in_decks": { "type": "array", "items": { "type": "string" } },
+    "risk_level": { "type": "string" },
+    "token_size": { "type": "string" },
+    "source_origin": { "type": "string" },
+    "maturity": { "type": "string" },
+    "model_compatibility": { "type": "array", "items": { "type": "string" } },
+    "requires": { "type": "array", "items": { "type": "string" } },
+    "unlocks": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}
