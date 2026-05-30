@@ -2,7 +2,7 @@
 
 ## Scope
 
-This receipt approves the starter Card Forge Core Cards as reusable canon Cards for the public open-core standard.
+This receipt approves the starter Card Forge Core Cards as reusable indexed Cards for the public open-core standard.
 
 ## Approved Cards
 
@@ -27,10 +27,10 @@ Each approved Card has:
 
 ## Boundary
 
-Canon status means the Card is approved as part of the Card Forge Core starter set. It does not mean the Card guarantees correctness, security, compliance, production readiness, or successful execution in all contexts.
+Indexed status means the Card is part of the Card Forge Core starter set. It does not mean the Card guarantees correctness, security, compliance, production readiness, or successful execution in all contexts.
 
 ## Result
 
-Status: `APPROVED_FOR_CANON`
+Status: `APPROVED_FOR_INDEX`
 
 Next action: keep these Cards small, reusable, and receipt-bound.

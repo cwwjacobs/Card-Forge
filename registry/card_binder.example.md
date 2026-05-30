@@ -22,8 +22,8 @@ The source of truth remains `registry/card_registry.jsonl`.
 
 - Card ID: `gate.human_approval.v0_1`
 - Type: Gate Card
-- Use: Pause before risky actions, canon changes, publishing, spending, or external communications.
+- Use: Pause before risky actions, index changes, publishing, spending, or external communications.
 
 ## Binder rule
 
-The Binder helps humans browse Cards. The Registry remains canonical.
+The Binder helps humans browse Cards. The Registry remains the source of truth.

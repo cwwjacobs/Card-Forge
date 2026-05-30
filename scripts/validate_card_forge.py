@@ -61,6 +61,10 @@ REQUIRED_CARD_FIELDS = {
     "done_when",
     "stop_if",
     "receipt",
+    "permissions",
+    "risk_level",
+    "token_size",
+    "source_origin",
 }
 
 REQUIRED_RUN_FIELDS = {
@@ -77,10 +81,8 @@ REQUIRED_RUN_FIELDS = {
 
 ALLOWED_CARD_STATUSES = {
     "raw",
-    "candidate",
     "cut",
     "forged",
-    "canon",
     "deprecated",
     "rejected",
     "generated",
@@ -88,6 +90,9 @@ ALLOWED_CARD_STATUSES = {
     "trusted",
     "indexed",
 }
+
+ALLOWED_RISK_LEVELS = {"low", "medium", "high", "critical"}
+ALLOWED_TOKEN_SIZES = {"small", "medium", "large"}
 
 
 def fail(message: str) -> None:
@@ -109,6 +114,79 @@ def load_json(path: Path) -> Any:
         return json.loads(path.read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
         fail(f"Invalid JSON in {path.relative_to(ROOT)}: {exc}")
+
+
+def parse_card_frontmatter(path: Path) -> dict[str, Any]:
+    text = path.read_text(encoding="utf-8")
+    if not text.startswith("---"):
+        fail(f"Missing YAML frontmatter in {path.relative_to(ROOT)}")
+
+    parts = text.split("---", 2)
+    if len(parts) < 3:
+        fail(f"Invalid YAML frontmatter in {path.relative_to(ROOT)}")
+
+    frontmatter = parts[1].strip()
+    data: dict[str, Any] = {}
+    current_key: str | None = None
+
+    for raw_line in frontmatter.splitlines():
+        line = raw_line.rstrip()
+        if not line:
+            continue
+
+        stripped = line.lstrip()
+        if stripped.startswith("- "):
+            if current_key is None:
+                fail(f"List item without key in {path.relative_to(ROOT)}: {line}")
+            item = stripped[2:].strip().strip('"').strip("'")
+            if current_key not in data:
+                data[current_key] = []
+            if not isinstance(data[current_key], list):
+                fail(f"Mixed list and scalar for {current_key} in {path.relative_to(ROOT)}")
+            data[current_key].append(item)
+        else:
+            if ": " in line:
+                key, value = line.split(": ", 1)
+            elif line.endswith(":"):
+                key = line[:-1]
+                value = ""
+            else:
+                fail(f"Invalid frontmatter line in {path.relative_to(ROOT)}: {line}")
+
+            key = key.strip()
+            value = value.strip().strip('"').strip("'")
+            current_key = key
+            if value:
+                data[key] = value
+            else:
+                data[key] = []
+
+    return data
+
+
+def validate_card_file(path: Path) -> None:
+    data = parse_card_frontmatter(path)
+
+    missing = REQUIRED_CARD_FIELDS - set(data)
+    if missing:
+        fail(
+            f"{path.relative_to(ROOT)} missing required Card fields: "
+            + ", ".join(sorted(missing))
+        )
+
+    risk = data.get("risk_level")
+    if risk and risk not in ALLOWED_RISK_LEVELS:
+        fail(f"{path.relative_to(ROOT)} invalid risk_level: {risk}")
+
+    token = data.get("token_size")
+    if token and token not in ALLOWED_TOKEN_SIZES:
+        fail(f"{path.relative_to(ROOT)} invalid token_size: {token}")
+
+    if "permissions" not in data:
+        fail(f"{path.relative_to(ROOT)} missing permissions")
+
+    if "source_origin" not in data:
+        fail(f"{path.relative_to(ROOT)} missing source_origin")
 
 
 def validate_registry(path: Path) -> None:
@@ -140,6 +218,14 @@ def validate_registry(path: Path) -> None:
         status = record.get("status")
         if status not in ALLOWED_CARD_STATUSES:
             fail(f"Invalid status for {card_id}: {status}")
+
+        risk = record.get("risk_level")
+        if risk and risk not in ALLOWED_RISK_LEVELS:
+            fail(f"Invalid risk_level for {card_id}: {risk}")
+
+        token = record.get("token_size")
+        if token and token not in ALLOWED_TOKEN_SIZES:
+            fail(f"Invalid token_size for {card_id}: {token}")
 
 
 def validate_schema_file(path: Path) -> None:
@@ -191,6 +277,12 @@ def main() -> None:
     validate_run_state(ROOT / "runs/examples/ai_build_preflight_run_state.example.json")
     validate_run_state(ROOT / "runs/example_run_state.json")
     validate_python_script(ROOT / "skills/card-forge-skill/scripts/card_forge_skill.py")
+
+    for card_file in ROOT.rglob("*.card.md"):
+        # Skip generated outputs inside expected_outputs since they are examples
+        if "expected_outputs" in str(card_file):
+            continue
+        validate_card_file(card_file)
 
     print("PASS: Card Forge core validation completed.")
 
