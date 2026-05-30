@@ -8,6 +8,7 @@ users can run it without installing dependencies.
 from __future__ import annotations
 
 import json
+import py_compile
 import sys
 from pathlib import Path
 from typing import Any
@@ -40,6 +41,10 @@ REQUIRED_PATHS = [
     "schemas/deck.schema.json",
     "schemas/run.schema.json",
     "schemas/receipt.schema.json",
+    "skills/card-forge-skill/SKILL.md",
+    "skills/card-forge-skill/README.md",
+    "skills/card-forge-skill/card_forge_skill.py",
+    "skills/card-forge-skill/examples/example_source.md",
 ]
 
 REQUIRED_CARD_FIELDS = {
@@ -154,6 +159,13 @@ def validate_run_state(path: Path) -> None:
         )
 
 
+def validate_python_script(path: Path) -> None:
+    try:
+        py_compile.compile(str(path), doraise=True)
+    except py_compile.PyCompileError as exc:
+        fail(f"Python compile failed for {path.relative_to(ROOT)}: {exc}")
+
+
 def main() -> None:
     for relative_path in REQUIRED_PATHS:
         require_path(relative_path)
@@ -171,6 +183,7 @@ def main() -> None:
 
     validate_run_state(ROOT / "runs/examples/ai_build_preflight_run_state.example.json")
     validate_run_state(ROOT / "runs/example_run_state.json")
+    validate_python_script(ROOT / "skills/card-forge-skill/card_forge_skill.py")
 
     print("PASS: Card Forge core validation completed.")
 
