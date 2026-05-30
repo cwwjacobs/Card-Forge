@@ -1,0 +1,14 @@
+{
+  "run_id": "run.edge_runtime_32k.demo_001",
+  "deck_id": "deck.ai_build_preflight.v0_1",
+  "current_stack": "stack.intake.compiled.v0_1",
+  "current_card": "check.source_inventory.v0_1",
+  "status": "RUNNING",
+  "inputs": [
+    "example index.html",
+    "example main.js"
+  ],
+  "outputs": [],
+  "next_action": "play check.source_inventory.v0_1",
+  "receipt_path": "examples/edge-runtime-32k/receipts/final_receipt.md"
+}
