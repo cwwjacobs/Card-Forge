@@ -2,7 +2,7 @@
 
 Card ID: `check.source_inventory.v0_1`
 Type: Check Card
-Status: candidate
+Status: canon
 
 ## Input
 
