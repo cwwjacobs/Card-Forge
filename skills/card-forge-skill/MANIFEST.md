@@ -34,4 +34,4 @@ PASS: Card Forge Skill completed.
 
 ## Boundary
 
-This Skill generates usable Cards. It does not require canonicalization. Operators may use Cards immediately, edit them, group them, index trusted ones on MCP, or ignore them.
+This Skill generates usable Cards. It does not require indexing or MCP publishing. Operators may use Cards immediately, edit them, group them, index trusted ones on MCP, or ignore them.

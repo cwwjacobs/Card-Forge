@@ -6,7 +6,7 @@ Use this Skill when the user wants to turn messy source material into usable Car
 
 This Skill accepts old repos, folders, notes, prompt logs, app folders, audit reports, workflow descriptions, prior conversation captures, or failed-build artifacts and emits Card Forge Cards that can be used immediately, edited, grouped into Stacks, added to Decks, or indexed later.
 
-A generated Card is a real usable Card. It does not need to be canonized before use.
+A generated Card is a real usable Card. It does not need to be indexed before use.
 
 ## Core operating rule
 
@@ -26,7 +26,7 @@ Use this Skill when asked to:
 - extract Cards from a conversation or audit report
 - prepare Cards for a Deck or Stack
 - check generated Cards against an existing Card registry/index
-- make a Card index worklist without forcing canonicalization
+- make a Card index worklist without forcing indexing or MCP publishing
 
 ## Inputs
 
@@ -119,7 +119,7 @@ Use simple status labels:
 - `indexed` — added to an MCP/Card index
 - `deprecated` — replaced or no longer recommended
 
-Avoid `candidate` when it makes the output sound unusable or not-a-card.
+Avoid wording that makes generated Cards sound unusable or not-a-card.
 
 ## MCP/Card index guidance
 
@@ -205,7 +205,7 @@ Generated Cards:
 - needs edit:
 - likely duplicate:
 - suggested Stack groupings:
-- suggested MCP/index candidates:
+- suggested MCP/index options:
 - warnings:
 ```
 
