@@ -39,6 +39,7 @@ REQUIRED_PATHS = [
     "receipts/example_receipt.md",
     "schemas/card.schema.json",
     "schemas/deck.schema.json",
+    "schemas/stack.schema.json",
     "schemas/run.schema.json",
     "schemas/receipt.schema.json",
     "skills/card-forge-skill/SKILL.md",
@@ -269,6 +270,7 @@ def main() -> None:
     for schema_name in [
         "card.schema.json",
         "deck.schema.json",
+        "stack.schema.json",
         "run.schema.json",
         "receipt.schema.json",
     ]:
