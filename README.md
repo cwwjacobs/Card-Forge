@@ -2,7 +2,7 @@
 
 Reusable workflow Cards, Card Stacks, Decks, Runs, and Receipts for AI-assisted work.
 
-Card Forge turns messy source material into small reusable workflow moves that can be stacked into repeatable Decks and run by humans, frontier models, or smaller edge agents.
+Card Forge turns high-noise source material into small reusable workflow moves that can be stacked into repeatable Decks and run by humans, frontier models, or smaller edge agents.
 
 ## Start here
 
@@ -26,7 +26,7 @@ That file gives the 5-minute path through the templates, starter Cards, registry
 
 ## Why this exists
 
-AI-assisted work often leaves behind messy prompts, partial apps, broken files, scattered notes, and unclear decisions. Card Forge gives that work a reusable structure:
+AI-assisted work often leaves behind rough prompts, partial apps, broken files, scattered notes, and unclear decisions. Card Forge gives that work a reusable structure:
 
 ```text
 source material -> Cards -> Card Stacks -> Deck -> Run -> Receipts
@@ -52,7 +52,7 @@ cards/           Reusable Cards grouped by type
 decks/           Packaged reusable Decks
 runs/            Example Run states and outputs
 receipts/        Example receipts from Runs
-schemas/         JSON schemas for Cards, Decks, Runs, and Receipts
+schemas/         Reference JSON schemas for Cards, Decks, Runs, and Receipts
 prompts/         Prompt cards for drawing, cutting, forging, building, and running
 templates/       Copyable templates for Cards, Decks, and Receipts
 scripts/         Validation scripts
@@ -92,6 +92,8 @@ Expected result:
 ```text
 PASS: Card Forge core validation completed.
 ```
+
+The validator is intentionally standard-library only. It checks required paths, registry JSONL shape, required Card/Run fields, schema file presence and basic schema shape, Python compile health, and known receipt references. It does **not** perform full JSON Schema validation of every Markdown/JSON instance.
 
 The same validator is wired into GitHub Actions through:
 
