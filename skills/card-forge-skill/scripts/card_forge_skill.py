@@ -21,7 +21,7 @@ from typing import Iterable
 TEXT_EXTENSIONS = {
     ".md", ".txt", ".json", ".jsonl", ".yaml", ".yml", ".toml", ".py", ".js",
     ".ts", ".tsx", ".jsx", ".html", ".css", ".sh", ".bash", ".zsh", ".xml",
-    ".csv", ".ini", ".cfg", ".env.example",
+    ".csv", ".ini", ".cfg",
 }
 
 IGNORE_DIRS = {
@@ -114,6 +114,8 @@ def normalize(text: str) -> str:
 def is_text_file(path: Path) -> bool:
     if path.name == ".env":
         return False
+    if path.name.endswith(".env.example"):
+        return True
     if path.suffix.lower() in TEXT_EXTENSIONS:
         return True
     if path.name.lower() in {"readme", "license", "makefile", "dockerfile"}:
@@ -165,9 +167,17 @@ def classify_card_type(title: str, body: str, rel_path: str) -> str:
     return "Action Card"
 
 
+HIGH_RISK_WORDS = {
+    "secret", "secrets", "token", "tokens", "password", "passwords",
+    "credential", "credentials", "delete", "payment", "prod", "production",
+}
+
+
 def risk_level_for(card_type: str, text: str) -> str:
     norm = normalize(text)
-    if any(w in norm for w in ["secret", "token", "password", "credential", "private key", "delete", "payment", "prod"]):
+    tokens = set(norm.split())
+    # Match whole words so "reproduce"/"product" don't trip the "prod" rule.
+    if (tokens & HIGH_RISK_WORDS) or ("private key" in norm):
         return "high"
     if card_type in {"Gate Card", "Contract Card", "Code Card"}:
         return "medium"
