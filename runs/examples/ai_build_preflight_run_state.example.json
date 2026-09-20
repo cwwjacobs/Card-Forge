@@ -1,0 +1,13 @@
+{
+  "run_id": "run.ai_build_preflight.example_001",
+  "deck_id": "deck.ai_build_preflight.v0_1",
+  "current_stack": "stack.intake.v0_1",
+  "current_card": "check.source_inventory.v0_1",
+  "status": "READY",
+  "inputs": [
+    "example index.html"
+  ],
+  "outputs": [],
+  "next_action": "play_current_card",
+  "receipt_path": "receipts/examples/ai_build_preflight_receipt.example.md"
+}

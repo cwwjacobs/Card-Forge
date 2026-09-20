@@ -1,0 +1,13 @@
+{
+  "tool": "card_forge_skill.py",
+  "source": "/home/terminus-protocol/Desktop/Card-Forge/skills/card-forge-skill/examples/tiny_source",
+  "registry": "/home/terminus-protocol/Desktop/Card-Forge/skills/card-forge-skill/examples/card_registry.example.jsonl",
+  "generated_cards": 5,
+  "outputs": [
+    "cards/",
+    "card_index_worklist.jsonl",
+    "duplicate_report.md",
+    "suggested_stacks.md",
+    "receipts/card_making_receipt.md"
+  ]
+}

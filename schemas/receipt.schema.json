@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://card-forge.local/schemas/receipt.schema.json",
+  "title": "Receipt",
+  "type": "object",
+  "required": [
+    "run_id",
+    "card_played",
+    "input_seen",
+    "output_created",
+    "status",
+    "next_action",
+    "warnings"
+  ],
+  "properties": {
+    "run_id": { "type": "string" },
+    "card_played": { "type": "string" },
+    "input_seen": { "type": "array", "items": { "type": "string" } },
+    "output_created": { "type": "array", "items": { "type": "string" } },
+    "status": { "type": "string" },
+    "next_action": { "type": "string" },
+    "warnings": { "type": "array", "items": { "type": "string" } },
+    "blockers": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}

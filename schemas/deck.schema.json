@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://card-forge.local/schemas/deck.schema.json",
+  "title": "Deck",
+  "type": "object",
+  "required": [
+    "deck_id",
+    "name",
+    "purpose",
+    "stacks_in_order",
+    "allowed_permissions",
+    "run_outputs",
+    "final_gate"
+  ],
+  "properties": {
+    "deck_id": { "type": "string" },
+    "name": { "type": "string" },
+    "purpose": { "type": "string" },
+    "stacks_in_order": { "type": "array", "items": { "type": "string" } },
+    "allowed_permissions": { "type": "array", "items": { "type": "string" } },
+    "run_outputs": { "type": "array", "items": { "type": "string" } },
+    "final_gate": { "type": "string" }
+  },
+  "additionalProperties": true
+}

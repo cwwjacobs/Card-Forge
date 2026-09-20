@@ -1,0 +1,6 @@
+# Python
+__pycache__/
+*.pyc
+
+# Card Forge skill output
+_card_forge_out/
