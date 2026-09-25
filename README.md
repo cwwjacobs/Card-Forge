@@ -91,9 +91,18 @@ Expected result:
 
 ```text
 PASS: Card Forge core validation completed.
+  Records validated against full schemas: 15 cards, 10 generated cards, 5 stacks, 1 decks, 3 runs, 6 receipt checkpoint records from 5 receipts.
+  Cross-references checked: 38.
+Functional checks (negative fixtures, reported separately from the validator pass): 15 passed, 0 failed.
 ```
 
-The validator is intentionally standard-library only. It checks required paths, registry JSONL shape, required Card/Run fields, schema file presence and basic schema shape, Python compile health, and known receipt references. It does **not** perform full JSON Schema validation of every Markdown/JSON instance.
+The validator is intentionally standard-library only (no third-party JSON Schema package is a repo dependency, so the needed JSON Schema subset is implemented in stdlib Python inside the validator). It checks required paths and then validates every Card, Stack, Deck, Run, and Receipt record in the repository against the full schema files in `schemas/` (generated Card examples against `skills/card-forge-skill/schemas/generated_card.schema.json`), enforces the Run status set from `RUN_STANDARD.md`, and verifies cross-reference integrity: Deck→Stack→Card references resolve and Run→Receipt references resolve (the receipt exists and declares the Run's `run_id`).
+
+It also runs the negative-fixture suite in `tests/negative/`: each fixture is a mutated copy of the repository (wrong types/ranges, missing required fields, dangling references, duplicate IDs, invalid Run states) that the validator must reject. Fixture results are functional checks and are reported separately from the overall validator pass; the exit code is non-zero if either fails. The suite can also be run standalone:
+
+```bash
+python3 tests/run_negative_fixtures.py
+```
 
 The same validator is wired into GitHub Actions through:
 
