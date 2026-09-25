@@ -1,0 +1,5 @@
+{
+  "description": "Card registry containing a duplicated card_id",
+  "replacements": {"registry/card_registry.jsonl": "card_registry.jsonl"},
+  "expect_error": "Duplicate card_id"
+}

@@ -1,0 +1,5 @@
+{
+  "description": "Run state whose receipt_path points to a file that does not exist",
+  "replacements": {"runs/example_run_state.json": "example_run_state.json"},
+  "expect_error": "ghost_receipt"
+}

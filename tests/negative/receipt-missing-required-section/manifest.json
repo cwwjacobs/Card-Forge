@@ -1,0 +1,5 @@
+{
+  "description": "Run Receipt without a Next action section (missing required next_action)",
+  "replacements": {"receipts/example_receipt.md": "example_receipt.md"},
+  "expect_error": "Next action"
+}

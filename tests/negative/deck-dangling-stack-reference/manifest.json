@@ -1,0 +1,5 @@
+{
+  "description": "Deck whose stacks_in_order references a Stack that does not exist",
+  "replacements": {"decks/ai-build-preflight/deck.md": "deck.md"},
+  "expect_error": "Ghost Stack"
+}

@@ -1,0 +1,5 @@
+{
+  "description": "Deck whose Draw Pool references a Card that does not exist",
+  "replacements": {"decks/ai-build-preflight/deck.md": "deck.md"},
+  "expect_error": "card.ghost.v0_1"
+}
