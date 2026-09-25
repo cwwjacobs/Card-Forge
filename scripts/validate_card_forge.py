@@ -258,12 +258,52 @@ def load_json(path: Path) -> tuple[Any, str | None]:
         return None, f"Cannot read {path}: {exc}"
 
 
+def schema_capability_errors(schema: Any, path: str = "$schema") -> list[str]:
+    """Reject schema features this validator would silently ignore.
+
+    Only properties' values and items contain subschemas. Property names and
+    annotation/enum payloads are data, even when named like schema keywords.
+    """
+    if not isinstance(schema, dict):
+        return [f"{path}: unsupported schema form (expected an object)"]
+    supported = {"type", "enum", "required", "properties", "items", "additionalProperties"}
+    annotations = {"$schema", "$id", "$comment", "title", "description", "default", "examples", "deprecated", "readOnly", "writeOnly"}
+    errors = [f"{path}: unsupported schema keyword '{key}'"
+              for key in schema if key not in supported | annotations]
+    if "type" in schema:
+        allowed = schema["type"]
+        allowed = [allowed] if isinstance(allowed, str) else allowed
+        types = {"object", "array", "string", "integer", "number", "boolean", "null"}
+        if (not isinstance(allowed, list) or not allowed
+                or any(not isinstance(value, str) or value not in types for value in allowed)):
+            errors.append(f"{path}.type: unsupported type declaration")
+    if "enum" in schema and (not isinstance(schema["enum"], list) or not schema["enum"]):
+        errors.append(f"{path}.enum: expected a nonempty array")
+    if "required" in schema and (not isinstance(schema["required"], list)
+            or any(not isinstance(value, str) for value in schema["required"])):
+        errors.append(f"{path}.required: expected an array of property names")
+    if "additionalProperties" in schema and not isinstance(schema["additionalProperties"], bool):
+        errors.append(f"{path}.additionalProperties: only boolean form is supported")
+    if "properties" in schema:
+        if not isinstance(schema["properties"], dict):
+            errors.append(f"{path}.properties: expected an object")
+        else:
+            for key, child in schema["properties"].items():
+                errors.extend(schema_capability_errors(child, f"{path}.properties.{key}"))
+    if "items" in schema:
+        errors.extend(schema_capability_errors(schema["items"], f"{path}.items"))
+    return errors
+
+
 def load_schema(root: Path, relative: str) -> dict[str, Any]:
     schema, error = load_json(root / relative)
     if error:
         raise RuntimeError(error)
     if not isinstance(schema, dict):
         raise RuntimeError(f"Schema is not a JSON object: {relative}")
+    capability_errors = schema_capability_errors(schema, relative)
+    if capability_errors:
+        raise RuntimeError("; ".join(capability_errors))
     return schema
 
 
