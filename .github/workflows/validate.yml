@@ -16,5 +16,8 @@ jobs:
         with:
           python-version: "3.x"
 
+      - name: Test schema capability guard
+        run: python3 -m unittest discover -s tests -p 'test_*.py'
+
       - name: Run Card Forge validator
         run: python3 scripts/validate_card_forge.py

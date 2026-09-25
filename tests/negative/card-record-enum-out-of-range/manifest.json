@@ -1,0 +1,5 @@
+{
+  "description": "Card registry record with risk_level outside the schema enum",
+  "replacements": {"registry/card_registry.jsonl": "card_registry.jsonl"},
+  "expect_error": "risk_level"
+}
