@@ -1,0 +1,5 @@
+{
+  "description": "Run state with inputs as a string instead of an array (wrong type)",
+  "replacements": {"runs/example_run_state.json": "example_run_state.json"},
+  "expect_error": "inputs"
+}

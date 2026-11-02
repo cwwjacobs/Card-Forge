@@ -1,0 +1,5 @@
+{
+  "description": "Card registry record with a numeric risk_level (wrong type)",
+  "replacements": {"registry/card_registry.jsonl": "card_registry.jsonl"},
+  "expect_error": "risk_level"
+}

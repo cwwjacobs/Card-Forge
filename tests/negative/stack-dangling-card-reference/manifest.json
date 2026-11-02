@@ -1,0 +1,5 @@
+{
+  "description": "Stack whose cards_in_order references a card that does not exist",
+  "replacements": {"stacks/intake_stack.md": "intake_stack.md"},
+  "expect_error": "card.ghost.v0_1"
+}

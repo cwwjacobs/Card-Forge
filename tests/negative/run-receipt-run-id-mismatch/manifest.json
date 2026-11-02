@@ -1,0 +1,5 @@
+{
+  "description": "Receipt whose declared Run ID does not match the Run that references it",
+  "replacements": {"receipts/example_receipt.md": "example_receipt.md"},
+  "expect_error": "declares Run ID"
+}

@@ -1,0 +1,5 @@
+{
+  "description": "Deck file without a Final gate section (missing required final_gate)",
+  "replacements": {"decks/ai-build-preflight/deck.md": "deck.md"},
+  "expect_error": "final_gate"
+}

@@ -11,19 +11,15 @@ They describe the expected shape of:
 
 ## Current validation boundary
 
-`python3 scripts/validate_card_forge.py` is intentionally standard-library only. It checks that schema files exist and declare an object shape with required fields. It also performs hand-rolled validation for the committed registry, Card frontmatter, Run State examples, Python script compile health, and receipt references.
+`python3 scripts/validate_card_forge.py` is intentionally standard-library only. No JSON Schema package is a repo dependency, so the validator implements the needed JSON Schema subset (`type`, `enum`, `required`, `properties`, `items`, `additionalProperties`) in stdlib Python.
 
-It does **not** currently run a full JSON Schema validator against every Markdown or JSON instance in the repository.
+It validates every record in the repository against these schemas:
 
-## Operator rule
+- Cards: registry JSONL records and `*.card.md` frontmatter against `card.schema.json`; generated Card examples against `skills/card-forge-skill/schemas/generated_card.schema.json`.
+- Stacks and Decks: parsed from their structured Markdown files against `stack.schema.json` and `deck.schema.json`.
+- Run States: the JSON Run State files against `run.schema.json`, with statuses restricted to the `RUN_STANDARD.md` set.
+- Receipts: Run Receipt Markdown files against `receipt.schema.json`. Each played Card yields one checkpoint record per `RUN_STANDARD.md`. Extraction rules: an absent `Warnings`/`Blockers` section means none were recorded (empty list); `Outputs created` and `Output created` both map to `output_created`; a `Cards played` table produces one record per row, otherwise the `Card ID` header field is `card_played`.
 
-Treat these schemas as reference contracts unless and until a schema-enforcing validator is added. Do not claim full schema enforcement from the current validator output alone.
+It also enforces cross-reference integrity: Deck→Stack→Card references resolve, and every Run's `receipt_path` exists and declares that Run's `run_id`.
 
-## Future hardening path
-
-A later validator can add full instance validation by either:
-
-1. adding a JSON Schema dependency such as `jsonschema`, or
-2. expanding the standard-library validator with explicit per-object checks.
-
-Until that happens, README and release language should say "reference schemas" rather than implying enforced schema compliance.
+Negative fixtures under `tests/negative/` prove the validator rejects wrong types/ranges, missing required fields, dangling references, duplicate IDs, and invalid Run states. Their counts are functional checks reported separately from the validator pass.

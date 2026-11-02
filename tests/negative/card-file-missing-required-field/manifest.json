@@ -1,0 +1,5 @@
+{
+  "description": "Card file frontmatter missing the required 'move' field",
+  "replacements": {"cards/basic/source_inventory.card.md": "source_inventory.card.md"},
+  "expect_error": "move"
+}

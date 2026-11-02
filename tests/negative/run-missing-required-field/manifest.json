@@ -1,0 +1,5 @@
+{
+  "description": "Run state missing the required receipt_path field",
+  "replacements": {"runs/example_run_state.json": "example_run_state.json"},
+  "expect_error": "receipt_path"
+}

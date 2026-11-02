@@ -1,0 +1,5 @@
+{
+  "description": "Run state with a status outside the RUN_STANDARD.md status set",
+  "replacements": {"runs/example_run_state.json": "example_run_state.json"},
+  "expect_error": "invalid Run status"
+}

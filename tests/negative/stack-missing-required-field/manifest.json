@@ -1,0 +1,5 @@
+{
+  "description": "Stack file without an Exit condition section (missing required exit_condition)",
+  "replacements": {"stacks/intake_stack.md": "intake_stack.md"},
+  "expect_error": "exit_condition"
+}
